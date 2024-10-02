@@ -1,12 +1,44 @@
-<h1> {{ article.title }} </h1>
-
-<small> {{ article.author }} </small>
-
-<time datetime=" {{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: '%Y-%m-%d' }}</time>
-
-<img src=" {{ article.image | img_url: 'large' }}" alt=" {{ article.image.alt }}">
-
-<div class=""> {{ article.content }} </div>
+<article>
+   {% for block in section.blocks %}
+      {% case block.type %}
+        {% when 'article_title' %}
+            <div class="flex items-center justify-center">
+                <div class="max-w-7xl">
+                    <a href="{{ blog.url }}" class="text-base uppercase text-gray-500 hover:text-gray-900 font-bold">{{ blog.title }}</a>
+                    <h1 class="text-4xl md:text-6xl font-medium">{{ article.title }}</h1>
+                </div>
+            </div>
+            <h1>{{ article.title }}</h1>
+        {% when 'article_author' %}
+            <div class="flex items-center justify-center">
+                <div class="max-w-7xl text-center">
+                    {% if section.settings.enable_author %}
+                        <small>{{ article.author }}</small>
+                     {% endif %}
+                </div>
+            </div>
+        {% when 'article_published_date' %}
+            <div class="flex items-center justify-center">
+                <div class="max-w-7xl text-center">
+                    {% if section.settings.enable_published_date %}
+                        <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: '%Y-%m-%d' }}</time>
+                    {% endif %}
+                </div>
+            </div>
+        {% when 'featured_image' %}
+            <div class="flex items-center justify-center">
+                <div class="max-w-7xl text-center">
+                    <img src="{{ article.image | img_url: 'large' }}" alt="{{ article.image.alt }}">
+                </div>
+             </div>
+        {% when 'article_content' %}
+            <div>{{ article.content }}</div>
+        {% when 'dummy_block' %}
+            <div class="hidden">Dummy block to force update</div>
+        {% else %}
+       {% endcase %}
+   {% endfor %}
+</article>
 
 {% schema %}
 {
@@ -23,6 +55,33 @@
             "id": "enable_published_date",
             "default": true ,
             "label": "Display Published Date"
+        }
+      ],
+      "blocks": [
+        {
+            "type": "article_title",
+            "name": "Title",
+            "limit": 1
+        },
+        {
+            "type": "article_author",
+            "name": "Author",
+            "limit": 1 
+        },
+        {
+            "type": "article_published_date",
+            "name": "Published Date",
+            "limit": 1 
+        },
+        {
+            "type": "featured_image",
+            "name": "Thumbnail",
+            "limit": 1 
+        },
+        {
+            "type": "article_content",
+            "name": "Content",
+            "limit": 1 
         }
       ]
 }
